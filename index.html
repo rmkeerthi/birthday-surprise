@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="A special birthday surprise made with love." />
+  <title>A Little Surprise For You ❤️</title>
+
+  <!-- Google Fonts for romantic cinematic aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Background Canvas for Stars & Floating Ambient Lights -->
+  <canvas id="ambient-canvas" class="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- Celebration Canvas for Confetti & Fireworks -->
+  <canvas id="fx-canvas" class="fx-canvas" aria-hidden="true"></canvas>
+
+  <!-- Flash overlay for dramatic transitions -->
+  <div id="flash-overlay" class="flash-overlay" aria-hidden="true"></div>
+
+  <!-- Ambient Light Vignette & Warmth Overlay -->
+  <div id="warmth-overlay" class="warmth-overlay" aria-hidden="true"></div>
+
+  <!-- Subtle Progress Badge & Music Toggle Bar -->
+  <header class="app-header">
+    <div class="progress-badge" id="progress-indicator" aria-label="Progress tracker">
+      <span class="step-current" id="step-num">01</span>
+      <span class="step-divider">/</span>
+      <span class="step-total">08</span>
+    </div>
+
+    <button id="music-toggle" class="music-pill" aria-label="Toggle background music" title="Toggle Music">
+      <span class="music-icon" id="music-icon">🎵</span>
+      <span class="music-label" id="music-label">Sound On</span>
+    </button>
+  </header>
+
+  <!-- Audio Element (points to assets/music.mp3, gracefully falls back to Web Audio API) -->
+  <audio id="bg-audio" preload="auto" loop>
+    <source src="assets/music.mp3" type="audio/mpeg" />
+    <source src="assets/music.webm" type="audio/webm" />
+  </audio>
+
+  <!-- Main Experience Wrapper -->
+  <main class="story-viewport" id="story-viewport">
+
+    <!-- ================= SCREEN 1: OPENING ================= -->
+    <section class="screen active" id="screen-1" data-step="01" aria-label="Screen 1: Opening Surprise">
+      <div class="glass-card entrance-card">
+        <div class="sparkle-ring">
+          <span class="emoji-glow pulse-slow">✨</span>
+        </div>
+        <h1 class="glow-title">Hey you… 👀</h1>
+        <p class="subtitle">Someone made a little surprise for you.</p>
+        <div class="action-wrap">
+          <button class="btn btn-primary pulse-btn" id="btn-start" aria-label="Open your surprise">
+            <span class="btn-text">Open your surprise ❤️</span>
+            <span class="btn-shimmer"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 2: LIGHT THE CANDLE ================= -->
+    <section class="screen" id="screen-2" data-step="02" aria-label="Screen 2: Birthday Cake and Candle">
+      <div class="glass-card cake-card">
+        <p class="section-tag" id="cake-pretitle">Before we begin…</p>
+        <h2 class="prompt-title" id="cake-title">Make a wish. ✨</h2>
+
+        <!-- Interactive Cake Illustration -->
+        <div class="cake-stage" id="cake-stage">
+          <div class="cake-container" id="cake-container">
+            <!-- Candle & Flame -->
+            <div class="candle-wrapper" id="candle-wrapper">
+              <div class="smoke-puff" id="smoke-puff"></div>
+              <div class="candle-flame" id="candle-flame">
+                <div class="flame-inner"></div>
+              </div>
+              <div class="candle-wick"></div>
+              <div class="candle-stick"></div>
+            </div>
+
+            <!-- Animated Knife (Appears in Screen 3) -->
+            <div class="cutting-knife" id="cutting-knife" aria-hidden="true">
+              <div class="knife-blade"></div>
+              <div class="knife-handle"></div>
+            </div>
+
+            <!-- Cake Body with Frosting -->
+            <div class="cake-layers" id="cake-layers">
+              <!-- Left Slice -->
+              <div class="cake-half cake-left" id="cake-left">
+                <div class="frosting-drip-row">
+                  <span class="drip"></span>
+                  <span class="drip"></span>
+                  <span class="drip"></span>
+                </div>
+                <div class="cake-tier tier-top"></div>
+                <div class="cake-tier tier-bottom"></div>
+                <div class="cake-plate"></div>
+              </div>
+
+              <!-- Right Slice -->
+              <div class="cake-half cake-right" id="cake-right">
+                <div class="frosting-drip-row">
+                  <span class="drip"></span>
+                  <span class="drip"></span>
+                  <span class="drip"></span>
+                </div>
+                <div class="cake-tier tier-top"></div>
+                <div class="cake-tier tier-bottom"></div>
+                <div class="cake-plate"></div>
+              </div>
+            </div>
+
+            <div class="plate-shadow"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic Cake Status Message -->
+        <p class="cake-status-msg" id="cake-msg"></p>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="cake-controls" id="cake-controls">
+          <!-- Step A: Light Candle -->
+          <button class="btn btn-secondary glow-gold" id="btn-light-candle">
+            Light the candle 🕯️
+          </button>
+          <!-- Step B: Blow Candle (Hidden initially) -->
+          <button class="btn btn-secondary glow-gold hidden" id="btn-blow-candle">
+            Blow the candle 💨
+          </button>
+          <!-- Step C: Cut Cake (Hidden initially) -->
+          <button class="btn btn-primary pulse-btn hidden" id="btn-cut-cake">
+            Cut the cake 🎂
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 3: CAKE CUTTING CELEBRATION ================= -->
+    <section class="screen" id="screen-3" data-step="03" aria-label="Screen 3: Birthday Reveal">
+      <div class="glass-card celebration-card">
+        <div class="badge-pill">Surprise Unlocked 🎉</div>
+        <h2 class="huge-bday-text" id="cake-celebration-title">HAPPY BIRTHDAY, YOU IDIOT ❤️😂</h2>
+        <p class="celebration-subtext">
+          But… your actual surprise hasn't started yet "unaku nane periya gift ...surprise vera venuma unaku ..❤️😂 ".
+        </p>
+        <div class="action-wrap">
+          <button class="btn btn-primary pulse-btn" id="btn-to-trick">
+            Wait… what? 👀
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 4: THE TRICK QUESTION ================= -->
+    <section class="screen" id="screen-4" data-step="04" aria-label="Screen 4: The Trick Question Mini-game">
+      <div class="glass-card question-card" id="question-card">
+        <p class="section-tag">One important question before I continue…</p>
+        <h2 class="question-text">Are you still crazy about me? 😏❤️</h2>
+
+        <!-- Interactive Dodge Play Area -->
+        <div class="mini-game-area" id="dodge-area">
+          <button class="btn btn-answer btn-no" id="btn-no" aria-label="Answer No">
+            NO 😌
+          </button>
+          <button class="btn btn-answer btn-yes" id="btn-yes" aria-label="Answer Yes">
+            YES ❤️
+          </button>
+        </div>
+
+        <p class="trick-feedback" id="trick-feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 5: ENVELOPE / BIRTHDAY CARD ================= -->
+    <section class="screen" id="screen-5" data-step="05" aria-label="Screen 5: Envelope and Letter">
+      <!-- Closed Envelope State -->
+      <div class="envelope-scene" id="envelope-scene">
+        <p class="envelope-instruction" id="env-instruction">You have one letter waiting for you 💌</p>
+
+        <div class="envelope-wrapper" id="envelope-wrapper">
+          <div class="envelope-back"></div>
+          <div class="letter-preview" id="letter-preview">
+            <span class="letter-seal-heart">💌</span>
+          </div>
+          <div class="envelope-front"></div>
+          <div class="envelope-top-flap" id="envelope-flap">
+            <div class="wax-seal" id="wax-seal">❤️</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary pulse-btn" id="btn-open-envelope">
+          Open it
+        </button>
+      </div>
+
+      <!-- Expanded Love Letter Modal/Card -->
+      <div class="expanded-card-modal hidden" id="expanded-letter">
+        <div class="letter-paper">
+          <div class="letter-header">
+            <span class="letter-tag">A Letter For You</span>
+            <h3 class="letter-salutation">To my favourite person ❤️</h3>
+          </div>
+          <div class="letter-body">
+            <p class="letter-paragraph">
+              From little kids in 4th &amp; 5th grade, to losing touch, finding each other again, and somehow becoming
+              ‘us.’ ❤️
+            </p>
+            <p class="letter-paragraph highlight-quote">
+              “We've had countless fights,<br />
+              breakups,<br />
+              and ‘seri, mudinjiduchu’ moments…<br /><br />
+              but somehow,evlo sanda evlo breakups irunthalum nan thirumbi varamaten nu
+              irukura time kooda still you choose me without any arguements...<br />
+              you always found your way back to me.”
+            </p>
+            <p class="letter-paragraph">
+              Through everything, you still held my hand. ♾️
+            </p>
+            <p class="letter-paragraph love-conclusion">
+              Maybe that's our story —<br />
+              not perfect, not easy,no good clicks,oru outing ,calls,meetups ethuvum ilenaalum still u and me but always
+              namma. ❤️
+            </p>
+          </div>
+          <div class="letter-footer">
+            <button class="btn btn-secondary glow-gold" id="btn-to-story">
+              There’s more… →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 6: 25 LITTLE REASONS WHY I LOVE YOU ================= -->
+    <section class="screen" id="screen-6" data-step="06" aria-label="Screen 6: 25 Little Reasons Why I Love You">
+
+      <!-- 25 Reasons Intro Card -->
+      <div class="glass-card reasons-intro-card" id="reasons-intro-card">
+        <div class="sparkle-ring">
+          <span class="emoji-glow pulse-slow">💖</span>
+        </div>
+        <p class="section-tag">A Special Countdown</p>
+        <h2 class="glow-title">25 reasons.</h2>
+        <p class="subtitle">25 tiny things that somehow became a big part of my life.</p>
+        <div class="action-wrap">
+          <button class="btn btn-primary pulse-btn" id="btn-start-reasons">
+            Start counting ❤️
+          </button>
+        </div>
+      </div>
+
+      <!-- 25 Reasons Interactive Display Card (Hidden initially) -->
+      <div class="glass-card reason-display-card hidden" id="reason-display-card">
+        <div class="reason-header">
+          <span class="reason-counter-badge" id="reason-counter">01 / 25</span>
+          <span class="reason-category-tag">Why I Love You</span>
+        </div>
+
+        <div class="reason-body-wrap" id="reason-body-wrap">
+          <h3 class="reason-title" id="reason-title">The little ‘Saptiya?’</h3>
+          <div class="reason-text" id="reason-text">
+            Because somehow, a simple ‘Saptiya?’ from you became one of my favourite forms of care. but sometimes nan
+            antha msg ku reply ae pannamaten ...
+          </div>
+
+          <!-- Interactive Slot for Special Widgets (Notification, Hands, Counter) -->
+          <div class="reason-interactive-slot" id="reason-slot"></div>
+        </div>
+
+        <div class="reason-footer">
+          <div class="reason-progress-bar">
+            <div class="reason-progress-fill" id="reason-progress-fill"></div>
+          </div>
+          <button class="btn btn-secondary glow-gold" id="btn-next-reason">
+            Next reason →
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= SCREEN 7: QUESTION SESSION ================= -->
+    <section class="screen" id="screen-7" data-step="07" aria-label="Screen 7: The Question Session">
+
+      <!-- Quiz Intro View -->
+      <div class="glass-card quiz-intro-card" id="quiz-intro-card">
+        <div class="badge-pill">QUESTION SESSION ❤️</div>
+        <h2 class="glow-title">Okay… now it's your turn. 👀</h2>
+        <p class="quiz-intro-subtitle">This is the Question Session.</p>
+        <div class="quiz-intro-text">
+          <p>You answered enough questions in your head while reading all that…</p>
+          <p>Now I have a few for you.</p>
+          <p class="quiz-disclaimer">“Answer honestly. I know when you're lying. 😌”</p>
+        </div>
+        <div class="action-wrap">
+          <button class="btn btn-primary pulse-btn" id="btn-start-quiz">
+            I'm ready, ask me 😌
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Quiz Card (Hidden initially) -->
+      <div class="glass-card quiz-active-card hidden" id="quiz-active-card">
+        <div class="quiz-header">
+          <span class="quiz-step-badge" id="quiz-step-badge">QUESTION 1 / 7</span>
+          <span class="quiz-category-tag" id="quiz-category-tag">Truth Time 👀</span>
+        </div>
+        <div class="quiz-progress" aria-hidden="true">
+          <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+        </div>
+
+        <div class="quiz-body">
+          <div class="quiz-typing hidden" id="quiz-typing" aria-hidden="true"><span></span><span></span><span></span>
+          </div>
+          <h3 class="quiz-question-title" id="quiz-question-title">When did you first realise that you were actually
+            crazy about me?</h3>
+
+          <div class="quiz-options-grid" id="quiz-options-grid">
+            <!-- Injected dynamically via JS: A, B, C, D -->
+          </div>
+
+          <div class="quiz-reaction-toast hidden" id="quiz-reaction-toast">
+            <span class="toast-emoji" id="quiz-toast-emoji">👀</span>
+            <span class="toast-msg" id="quiz-toast-msg">Hmm… noted. 👀❤️</span>
+          </div>
+        </div>
+
+        <div class="quiz-footer hidden" id="quiz-footer">
+          <button class="btn btn-secondary glow-gold" id="btn-next-question">
+            Next question →
+          </button>
+        </div>
+      </div>
+
+      <!-- Final Emotional Question Card (Hidden initially) -->
+      <div class="glass-card quiz-final-card hidden" id="quiz-final-card">
+        <p class="final-q-intro" id="final-q-intro">One last question…</p>
+
+        <div class="final-q-content hidden" id="final-q-content">
+          <h3 class="final-q-title">
+            After all these years…sanda poduven,thituven,....nalla irritate panuven ,unakaga nan ethuvum pannamaten ,nan
+            seriyana somberi ,future la nalla saptu saptu thoongalamnu irukuren ....ipo soluu....
+          </h3>
+          <p class="final-q-ask">
+            will you still hold my hand? ♾️❤️
+          </p>
+
+          <div class="final-q-actions">
+            <button class="btn btn-primary pulse-btn final-ans-btn" data-answer="always">
+              “Always.” ❤️
+            </button>
+            <button class="btn btn-secondary glow-gold final-ans-btn" data-answer="obviously">
+              “Obviously.” 🥹
+            </button>
+          </div>
+        </div>
+
+        <!-- Post-answer heart melt view -->
+        <div class="final-q-success hidden" id="final-q-success">
+          <div class="big-heart-pop">💖</div>
+          <h3 class="success-sweet-text" id="final-success-title">That's all I wanted to hear. ❤️</h3>
+          <div class="interview-wrap">
+            <p class="interview-line1 seq-item" id="iv-1">Okay… interview over. 😂</p>
+            <p class="interview-line2 seq-item" id="iv-2">You passed. ❤️</p>
+            <p class="interview-line3 seq-item" id="iv-3">Now I can finally give you your birthday wish.</p>
+            <div class="action-wrap seq-item" id="iv-btn" style="margin-top: 20px;">
+              <button class="btn btn-primary pulse-btn" id="btn-to-finale">
+                Open your birthday wish 🎂✨
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= SCREEN 8: GRAND FINALE ================= -->
+    <section class="screen" id="screen-8" data-step="08" aria-label="Screen 8: Grand Finale & Birthday Message">
+      <div class="grand-finale-container">
+
+        <!-- Opening Dramatic Build-up -->
+        <div class="finale-intro" id="finale-intro">
+          <p class="pre-reveal-text">And now…</p>
+        </div>
+
+        <!-- Main Birthday Reveal Section -->
+        <div class="finale-main" id="finale-main">
+          <h1 class="grand-bday-title glow-gold-text">
+            HAPPY 25TH BIRTHDAY <span class="heart-pulse">❤️</span>
+          </h1>
+          <h2 class="grand-bday-subheading" id="bday-recipient-subheading">
+            To the person who somehow became one of the most important chapters of my life.
+          </h2>
+
+          <div class="glass-card heartfelt-wishes-card">
+            <p class="wish-line">
+              I hope this year brings you happiness, success, peace, and everything you're working for.
+            </p>
+            <div class="quote-divider"></div>
+            <p class="wish-emphasis">
+              Keep growing.<br />
+              Keep dreaming.<br />
+              Keep being you.<br /><br />
+              And please…<br />
+              <strong>don't stop being crazy about me. 😌❤️</strong>
+            </p>
+          </div>
+
+          <!-- Special Final Card with Glowing Border & Typewriter Effect -->
+          <div class="golden-border-card" id="special-quote-card">
+            <div class="quote-icon">“</div>
+            <p class="typewriter-text" id="typewriter-quote">
+              <!-- Animated letter-by-letter or line-by-line -->
+            </p>
+            <p class="quote-signature hidden" id="quote-signature">
+              Happy Birthday my sandakaara,rowdy,vennamavanaee. ❤️
+            </p>
+          </div>
+
+          <!-- Atmospheric Final Celebration Text -->
+          <div class="night-sky-banner">
+            <h3 class="glow-banner-title">HAPPY 25TH BIRTHDAY ❤️🎂</h3>
+            <p class="story-never-ends">Our story isn't over yet…</p>
+            <p class="chapter-forever">This is just another chapter. ♾️</p>
+          </div>
+
+          <!-- Replay Section -->
+          <div class="replay-section">
+            <p class="replay-prompt">Want to experience it again? ❤️</p>
+            <button class="btn btn-secondary glow-gold replay-btn" id="btn-replay">
+              Replay our story ↻
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
